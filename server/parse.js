@@ -7,6 +7,7 @@ const pfvArray = require('./powerhouse-fv.json');
 const OrderRegExp = {
   TOTAL: /(Total \(estimated\))\D*(\d+\.\d+)/,
   ITEM: n => new RegExp(n + '[s]?\s+', 'gi'),
+  ORDER_REF: /(Order reference\s+(\d+)\s+)/
 };
 
 // Converts a Date into YYYY<s>MM format
@@ -24,15 +25,17 @@ function extractTotal(msg){
     return null;
   }
   let tot = OrderRegExp.TOTAL.exec(msg.preview);
+  let orderRef = OrderRegExp.ORDER_REF.exec(msg.preview);
   if (!tot) {
     const msgBody = msg.strippedHtmlBody;
     // Try once again using the message body in case info not in preview
     tot = OrderRegExp.TOTAL.exec(msgBody);
+    orderRef = OrderRegExp.ORDER_REF.exec(msgBody);
   }
   //console.log('MAP: tot: ', tot);
 
   // if found total and managed to extract value from it
-  if (tot && tot.length === 3) {
+  try{
     const total = tot[2];
     console.log('MAP: total to add: ', total);
 
@@ -44,11 +47,14 @@ function extractTotal(msg){
         total: total,
         msgId: msg.id,
         threadId: msg.threadId,
-        date: date
+        date: date,
+        orderRef: orderRef[2]
       }
     };
+  }catch(e){
+    console.log('MAP extractTotal catch', e);
+    return null;
   }
-  return null;
 }
 
 function checkItems(msg){
