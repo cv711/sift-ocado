@@ -5,7 +5,8 @@
 'use strict';
 const pfvArray = require('./powerhouse-fv.json');
 const OrderRegExp = {
-  TOTAL: /(Total \(estimated\))\D*(\d+\.\d+)/
+  TOTAL: /(Total \(estimated\))\D*(\d+\.\d+)/,
+  ITEM: n => new RegExp(n + '[s]?\s+', 'gi'),
 };
 
 // Converts a Date into YYYY<s>MM format
@@ -57,7 +58,7 @@ function checkItems(msg){
   const msgBody = msg.strippedHtmlBody;
   const found = pfvArray.map(d =>{
     // exceptions: lemonade
-    const r = new RegExp(d.name + '([s]|\s+)', 'gi');
+    const r = OrderRegExp.ITEM(d.name);
     return r.test(msgBody) ? 1 : 0;
   });
 
