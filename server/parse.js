@@ -60,7 +60,7 @@ function checkItems(msg){
     return r.test(msgBody) ? 1 : 0;
   });
 
-  console.log('checkItems found:', found);
+  // console.log('checkItems found:', found);
   return {
     name: 'foodItems',
     key: msg.id,
