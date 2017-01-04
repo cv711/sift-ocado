@@ -56,7 +56,8 @@ function checkItems(msg){
   }
   const msgBody = msg.strippedHtmlBody;
   const found = pfvArray.map(d =>{
-    const r = new RegExp(d.name, 'gi');
+    // exceptions: lemonade
+    const r = new RegExp(d.name + '([s]|\s+)', 'gi');
     return r.test(msgBody) ? 1 : 0;
   });
 
